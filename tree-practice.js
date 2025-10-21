@@ -133,72 +133,107 @@ function inOrderPredecessor(rootNode, target) {
 
   return result ? result.val : null;
 }
-function search(rootNode, target) {
-  let currentNode = rootNode;
+// function search(rootNode, target) {
+//   let currentNode = rootNode;
 
-  // iterate through tree until a null child is found.
-  while (currentNode !== null) {
-    // return true if currentNode has desired value
-    if (currentNode.val === target) return true;
+//   // iterate through tree until a null child is found.
+//   while (currentNode !== null) {
+//     // return true if currentNode has desired value
+//     if (currentNode.val === target) return true;
 
-    // determine next node by comparing nodes value to target value
-    if (currentNode.val < target) currentNode = currentNode.right;
-    else if (currentNode.val > target) currentNode = currentNode.left;
-  }
+//     // determine next node by comparing nodes value to target value
+//     if (currentNode.val < target) currentNode = currentNode.right;
+//     else if (currentNode.val > target) currentNode = currentNode.left;
+//   }
 
-  return false;
-}
+//   return false;
+// }
+// function deleteNodeBST(rootNode, target) {
+//   let parent;
+
+//   // Do a traversal to find the node. Keep track of the parent
+//   if (search(rootNode, target)) parent = getParentNode(rootNode, target);
+//   // Undefined if the target cannot be found
+//   else {
+//     return undefined;
+//   }
+
+//   // Set target based on parent
+//   let directionChild;
+//   if (!parent) target = rootNode;
+//   else if (parent.left && parent.left.val === target) {
+//     target = parent.left;
+//     directionChild = 'left';
+//   } else {
+//     target = parent.right;
+//     directionChild = 'right';
+//   }
+
+//   // Case 0: Zero children and no parent:
+//   if (parent === null && target.left === null && target.right === null)
+//     //   return null
+//     return null;
+
+//   // Case 1: Zero children:
+//   if (target.left === null && target.right === null) {
+//     //   Set the parent that points to it to null
+//     if (parent.left.val === target.val) parent.left = null;
+//     else parent.right = null;
+//   }
+
+//   // Case 2: Two children:
+//   else if (target.left && target.right) {
+//     let successor = findMinBST(target.right);
+//     deleteNodeBST(rootNode, successor);
+//     target.val = successor;
+//   }
+
+//   // Case 3: One child:
+//   else if ((target.left && !target.right) || (!target.left && target.right)) {
+//     // find child
+//     let child;
+//     if (target.left) child = target.left;
+//     else child = target.right;
+
+//     //   Make the parent point to the child
+//     if (directionChild === 'left') parent.left = child;
+//     else parent.right = child;
+//   }
+// }
 function deleteNodeBST(rootNode, target) {
-  let parent;
+  if (!rootNode) return undefined;
 
-  // Do a traversal to find the node. Keep track of the parent
-  if (search(rootNode, target)) parent = getParentNode(rootNode, target);
-  // Undefined if the target cannot be found
-  else {
-    return undefined;
+  let found = false; // Track if node exists
+
+  function findMin(node) {
+    while (node.left) node = node.left;
+    return node;
   }
 
-  // Set target based on parent
-  let directionChild;
-  if (!parent) target = rootNode;
-  else if (parent.left && parent.left.val === target) {
-    target = parent.left;
-    directionChild = 'left';
-  } else {
-    target = parent.right;
-    directionChild = 'right';
+  function deleteRec(node, target) {
+    if (!node) return null;
+
+    if (target < node.val) {
+      node.left = deleteRec(node.left, target);
+    } else if (target > node.val) {
+      node.right = deleteRec(node.right, target);
+    } else {
+      // Node found
+      found = true;
+
+      if (!node.left) return node.right;
+      if (!node.right) return node.left;
+
+      let successor = findMin(node.right);
+      node.val = successor.val;
+      node.right = deleteRec(node.right, successor.val);
+    }
+
+    return node;
   }
 
-  // Case 0: Zero children and no parent:
-  if (parent === null && target.left === null && target.right === null)
-    //   return null
-    return null;
-
-  // Case 1: Zero children:
-  if (target.left === null && target.right === null) {
-    //   Set the parent that points to it to null
-    if (parent.left.val === target.val) parent.left = null;
-    else parent.right = null;
-  }
-
-  // Case 2: Two children:
-  else if (target.left && target.right) {
-    let successor = findMinBST(target.right);
-    deleteNodeBST(rootNode, successor);
-    target.val = successor;
-  }
-
-  // Case 3: One child:
-  else if ((target.left && !target.right) || (!target.left && target.right)) {
-    // find child
-    let child;
-    if (target.left) child = target.left;
-    else child = target.right;
-
-    //   Make the parent point to the child
-    if (directionChild === 'left') parent.left = child;
-    else parent.right = child;
-  }
+  const newRoot = deleteRec(rootNode, target);
+  return found ? newRoot : undefined; //
 }
 
 module.exports = {
