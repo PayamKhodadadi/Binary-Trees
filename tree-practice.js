@@ -58,23 +58,16 @@ function getHeight(rootNode) {
 }
 
 function balancedTree(rootNode) {
-  function checkHeight(node) {
-    if (!node) return 0; // height of empty tree = 0
+  if (!rootNode) return true;
 
-    const leftHeight = checkHeight(node.left);
-    if (leftHeight === -1) return -1; // left subtree unbalanced
+  const leftHeight = getHeight(rootNode.left);
+  const rightHeight = getHeight(rootNode.right);
 
-    const rightHeight = checkHeight(node.right);
-    if (rightHeight === -1) return -1; // right subtree unbalanced
-
-    if (Math.abs(leftHeight - rightHeight) > 1) return -1; // current node unbalanced
-
-    // return height if balanced
-    return 1 + Math.max(leftHeight, rightHeight);
-  }
-
-  // If unbalanced, checkHeight returns -1
-  return checkHeight(rootNode) !== -1;
+  return (
+    Math.abs(leftHeight - rightHeight) <= 1 &&
+    balancedTree(rootNode.left) &&
+    balancedTree(rootNode.right)
+  );
 }
 
 function countNodes(rootNode) {
