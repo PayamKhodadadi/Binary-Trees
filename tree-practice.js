@@ -5,23 +5,27 @@ const { BinarySearchTree, TreeNode } = require('./binary-search-tree.js');
 // Practice problems on binary trees
 
 function findMinBST(rootNode) {
-  let current = rootNode;
-  let min = current.val;
-  while (current.left !== null) {
-    min = current.left.val;
-    current = current.left;
-  }
-  return min;
+  // let current = rootNode;
+  // let min = current.val;
+  // while (current.left !== null) {
+  //   min = current.left.val;
+  //   current = current.left;
+  // }
+  // return min;
+  while (rootNode.left) rootNode = rootNode.left;
+  return rootNode.val;
 }
 
 function findMaxBST(rootNode) {
-  let current = rootNode;
-  let max = current.val;
-  while (current.right !== null) {
-    max = current.right.val;
-    current = current.right;
-  }
-  return max;
+  // let current = rootNode;
+  // let max = current.val;
+  // while (current.right !== null) {
+  //   max = current.right.val;
+  //   current = current.right;
+  // }
+  // return max;
+  while (rootNode.right) rootNode = rootNode.right;
+  return rootNode.val;
 }
 
 function findMinBT(rootNode) {
@@ -198,11 +202,6 @@ function deleteNodeBST(rootNode, target) {
 
   let found = false; // Track if node exists
 
-  function findMin(node) {
-    while (node.left) node = node.left;
-    return node;
-  }
-
   function deleteRec(node, target) {
     if (!node) return null;
 
@@ -217,9 +216,9 @@ function deleteNodeBST(rootNode, target) {
       if (!node.left) return node.right;
       if (!node.right) return node.left;
 
-      let successor = findMin(node.right);
-      node.val = successor.val;
-      node.right = deleteRec(node.right, successor.val);
+      let successor = findMinBST(node.right);
+      node.val = successor;
+      node.right = deleteRec(node.right, successor);
     }
 
     return node;
